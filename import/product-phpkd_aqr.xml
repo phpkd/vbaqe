@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<product productid="phpkd_aqr" active="1">
+	<title>Advanced Quick Reply</title>
+	<description><![CDATA[This product extends 'Quick Reply' to use the "Advanced Editor mode" with all of it's functionality (with full control from AdminCP).]]></description>
+	<version><![CDATA[1.1.0]]></version>
+	<revision><![CDATA[$Revision$]]></revision>
+	<released><![CDATA[$Date$]]></released>
+	<url><![CDATA[http://www.phpkd.net/forum/misc.php?do=mods&action=producthelp&pid=phpkd_aqr]]></url>
+	<versioncheckurl><![CDATA[http://www.phpkd.net/forum/misc.php?do=mods&action=productcheck&pid=phpkd_aqr]]></versioncheckurl>
+	<dependencies>
+		<dependency dependencytype="vbulletin" minversion="3.7.0" maxversion="3.7.99" />
+	</dependencies>
+	<codes>
+		<code version="*">
+			<installcode><![CDATA[// look to see if we already have old versions of this product installed
+$oldpid = "phpkd_full_quickreply";
+if ($existingprod = $db->query_first("
+	SELECT *
+	FROM " . TABLE_PREFIX . "product
+	WHERE productid = '" . $db->escape_string($oldpid) . "'"
+))
+{
+	print_dots_start($vbphrase['phpkd_aqr_deleting_old_product'] . " (Title: " . $existingprod['title'] . ", ID: " . $existingprod['productid'] . ", Version: " . $existingprod['version'] . ").<br />" . $vbphrase['please_wait'], ':', 'phpkd_aqr_uninstall_old');
+	delete_product($oldpid);
+	print_dots_stop();
+}
+
+$info['revision'] = trim(substr(substr($arr['revision'], 10), 0, -1));
+$info['released'] = trim(substr(substr($arr['released'], 6), 0, -1));
+if ($vbulletin->options['phpkd_free37_data'])
+{
+	$holder = unserialize($vbulletin->options['phpkd_free37_data']);
+	$holder[$info['productid']] = $info;
+	$data = $db->escape_string(serialize($holder));
+	$db->query_write("
+		UPDATE " . TABLE_PREFIX . "setting
+		SET value = '$data'
+		WHERE varname = 'phpkd_free37_data'
+	");
+}
+else
+{
+	$holder[$info['productid']] = $info;
+	$data = $db->escape_string(serialize($holder));
+
+	$db->query_write("
+		REPLACE INTO " . TABLE_PREFIX . "setting
+			(varname, grouptitle, value, defaultvalue, datatype, optioncode, displayorder, advanced, volatile, validationcode, blacklist, product)
+		VALUES
+			('phpkd_free37_data', 'version', '$data', '', 'free', '', '1000', '0', '1', '', '0', 'phpkd_frame_work')
+	");
+
+	$db->query_write("
+		REPLACE INTO " . TABLE_PREFIX . "phrase
+			(languageid, fieldname, varname, text, product, username, dateline, version)
+		VALUES
+			('-1', 'vbsettings', 'setting_phpkd_free37_data_title', 'PHPKD Free Products\' Data (3.7.x) [Sensitive]', 'phpkd_frame_work', 'PHPKD', '" . TIMENOW . "', '1.1.0'),
+			('-1', 'vbsettings', 'setting_phpkd_free37_data_desc', 'PHPKD Free Products\' Data used for debugging issues. <strong>[Sensitive Data, DON\'T ALTER]</strong>.', 'phpkd_frame_work', 'PHPKD', '" . TIMENOW . "', '1.1.0')
+		");
+}
+
+print_dots_start("Installing: " . $info['title'] . "<br />Version: " . $info['version'] . ", Revision: " . $info['revision'] . ", Released: " . $info['released'] . ".<br />" . $vbphrase['please_wait'], ':', 'phpkd_aqr_install_info');
+print_dots_stop();]]></installcode>
+		</code>
+	</codes>
+	<templates>
+		<template name="phpkd_aqr_editor_smiliebox" templatetype="template" date="1203342391" username="PHPKD" version="1.0.0"><![CDATA[<if condition="$show['smiliebox']">
+<fieldset id="{$editorid}_smiliebox" title="$vbphrase[smilies]">
+	<legend>$vbphrase[smilies]<if condition="$show['moresmilieslink']"> [<a href="#" onclick="vB_Editor['$editorid'].open_smilie_window(smiliewindow_x, smiliewindow_y); return false" title="<phrase 1="$vboptions[smtotal]" 2="$totalsmilies">$vbphrase[showing_x_smilies_of_y_total]</phrase>">$vbphrase[more]</a>]</if></legend>
+	<table cellpadding="4" cellspacing="0" border="0" align="center">
+	$smiliebits
+	</table>
+</fieldset>
+<else />
+<div id="smiliebox" style="display:none"></div>
+</if>]]></template>
+		<template name="phpkd_aqr_showthread_quickreply" templatetype="template" date="1211595343" username="PHPKD" version="1.1.0"><![CDATA[<!-- $phpkd_aqr[title] -->
+<table cellpadding="0" cellspacing="0" border="0" <if condition="$vboptions['phpkd_aqr_messagewidth']">style="width: 100%"</if>>
+<tr>
+	<td id="$editorid" class="vBulletin_editor" width="100%">
+		<if condition="$show['editor_toolbar']">
+		<div id="{$editorid}_controls" class="controlbar">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td><div class="imagebutton" id="{$editorid}_cmd_removeformat"><img src="$stylevar[imgdir_editor]/removeformat.gif" width="21" height="20" alt="$vbphrase[remove_text_formatting]" /></div></td>
+					<if condition="$show['font_bbcode'] OR $show['size_bbcode']"><td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td></if>
+					<if condition="$show['font_bbcode']">
+					<td>
+						<div class="imagebutton" id="{$editorid}_popup_fontname" title="$vbphrase[fonts]">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr>
+									<td class="popup_feedback"><div id="{$editorid}_font_out" style="width:91px">&nbsp;</div></td>
+									<td class="popup_pickbutton"><img src="$stylevar[imgdir_editor]/menupop.gif" width="11" height="16" alt="" /></td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					</if>
+					<if condition="$show['size_bbcode']">
+					<td>
+						<div class="imagebutton" id="{$editorid}_popup_fontsize" title="$vbphrase[sizes]">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr>
+									<td class="popup_feedback"><div id="{$editorid}_size_out" style="width:25px">&nbsp;</div></td>
+									<td class="popup_pickbutton"><img src="$stylevar[imgdir_editor]/menupop.gif" width="11" height="16" alt="" /></td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					</if>
+					<if condition="$show['color_bbcode']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+					<td>
+						<div class="imagebutton" id="{$editorid}_popup_forecolor" title="$vbphrase[colors]">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr>
+									<td id="{$editorid}_color_out"><img src="$stylevar[imgdir_editor]/color.gif" width="21" height="16" alt="" /><br /><img src="$vboptions[cleargifurl]" id="{$editorid}_color_bar" alt="" style="background-color:black" width="21" height="4" /></td>
+									<td class="alt_pickbutton"><img src="$stylevar[imgdir_editor]/menupop.gif" width="11" height="16" alt="" /></td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					</if>
+					<if condition="$show['wysiwygsmilies']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+					<td>
+						<div class="imagebutton" id="{$editorid}_popup_smilie" title="$vbphrase[smilies]">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr>
+									<td><img src="$stylevar[imgdir_editor]/smilie.gif" alt="" width="21" height="20" /></td>
+									<td class="alt_pickbutton"><img src="$stylevar[imgdir_editor]/menupop.gif" width="11" height="16" alt="" /></td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					</if>
+
+					<if condition="$vboptions['phpkd_aqr_cutcopypaste']">
+						<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_cut"><img src="$stylevar[imgdir_editor]/cut.gif" width="21" height="20" alt="$vbphrase[cut]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_copy"><img src="$stylevar[imgdir_editor]/copy.gif" width="21" height="20" alt="$vbphrase[copy]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_paste"><img src="$stylevar[imgdir_editor]/paste.gif" width="21" height="20" alt="$vbphrase[paste]" /></div></td>
+					</if>
+
+					<if condition="$vboptions['phpkd_aqr_undoredo']">
+						<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_undo"><img src="$stylevar[imgdir_editor]/undo.gif" width="21" height="20" alt="$vbphrase[undo]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_redo"><img src="$stylevar[imgdir_editor]/redo.gif" width="21" height="20" alt="$vbphrase[redo]" /></div></td>
+					</if>
+
+					<td width="100%">&nbsp;</td>
+					<if condition="is_browser('ie') AND !is_browser('mac')"><td><div class="imagebutton" id="{$editorid}_cmd_spelling"><img src="$stylevar[imgdir_editor]/spelling.gif" width="21" height="20" alt="$vbphrase[check_spelling]" /></div></td></if>
+					<td>
+						<div class="imagebutton" id="{$editorid}_cmd_resize_0_99"><img src="$stylevar[imgdir_editor]/resize_0.gif" width="21" height="9" alt="$vbphrase[decrease_size]" /></div>
+						<div class="imagebutton" id="{$editorid}_cmd_resize_1_99"><img src="$stylevar[imgdir_editor]/resize_1.gif" width="21" height="9" alt="$vbphrase[increase_size]" /></div>
+					</td>
+					<if condition="$show['wysiwyg_compatible']"><td><div class="imagebutton" id="{$editorid}_cmd_switchmode"><img src="$stylevar[imgdir_editor]/switchmode.gif" width="21" height="20" alt="$vbphrase[switch_editor_mode]" /></div></td></if>
+				</tr>
+			</table>
+
+			<if condition="!$show['basicbbcodeonly']">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<tr>
+				<if condition="$show['basic_bbcode']">
+					<td><div class="imagebutton" id="{$editorid}_cmd_bold"><img src="$stylevar[imgdir_editor]/bold.gif" width="21" height="20" alt="$vbphrase[bold]" /></div></td>
+					<td><div class="imagebutton" id="{$editorid}_cmd_italic"><img src="$stylevar[imgdir_editor]/italic.gif" width="21" height="20" alt="$vbphrase[italic]" /></div></td>
+					<td><div class="imagebutton" id="{$editorid}_cmd_underline"><img src="$stylevar[imgdir_editor]/underline.gif" width="21" height="20" alt="$vbphrase[underline]" /></div></td>
+				</if>
+				<if condition="$show['align_bbcode']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+					<if condition="$stylevar['textdirection'] == 'ltr'">
+						<td><div class="imagebutton" id="{$editorid}_cmd_justifyleft"><img src="$stylevar[imgdir_editor]/justifyleft.gif" width="21" height="20" alt="$vbphrase[align_left]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_justifycenter"><img src="$stylevar[imgdir_editor]/justifycenter.gif" width="21" height="20" alt="$vbphrase[align_center]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_justifyright"><img src="$stylevar[imgdir_editor]/justifyright.gif" width="21" height="20" alt="$vbphrase[align_right]" /></div></td>
+					<else />
+						<td><div class="imagebutton" id="{$editorid}_cmd_justifyright"><img src="$stylevar[imgdir_editor]/justifyright.gif" width="21" height="20" alt="$vbphrase[align_right]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_justifycenter"><img src="$stylevar[imgdir_editor]/justifycenter.gif" width="21" height="20" alt="$vbphrase[align_center]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_justifyleft"><img src="$stylevar[imgdir_editor]/justifyleft.gif" width="21" height="20" alt="$vbphrase[align_left]" /></div></td>
+					</if>
+				</if>
+				<if condition="$show['align_bbcode'] OR $show['list_bbcode']"><td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td></if>
+				<if condition="$show['list_bbcode']">
+					<td><div class="imagebutton" id="{$editorid}_cmd_insertorderedlist"><img src="$stylevar[imgdir_editor]/insertorderedlist.gif" width="21" height="20" alt="$vbphrase[ordered_list]" /></div></td>
+					<td><div class="imagebutton" id="{$editorid}_cmd_insertunorderedlist"><img src="$stylevar[imgdir_editor]/insertunorderedlist.gif" width="21" height="20" alt="$vbphrase[unordered_list]" /></div></td>
+				</if>
+				<if condition="$show['align_bbcode'] OR $show['list_bbcode']">
+					<if condition="$stylevar['textdirection'] == 'ltr'">
+						<td><div class="imagebutton" id="{$editorid}_cmd_outdent"><img src="$stylevar[imgdir_editor]/outdent.gif" width="21" height="20" alt="$vbphrase[decrease_indent]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_indent"><img src="$stylevar[imgdir_editor]/indent.gif" width="21" height="20" alt="$vbphrase[increase_indent]" /></div></td>
+					<else />
+						<td><div class="imagebutton" id="{$editorid}_cmd_outdent"><img src="$stylevar[imgdir_editor]/indent.gif" width="21" height="20" alt="$vbphrase[decrease_indent]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_indent"><img src="$stylevar[imgdir_editor]/outdent.gif" width="21" height="20" alt="$vbphrase[increase_indent]" /></div></td>
+					</if>
+				</if>
+				<if condition="$show['url_bbcode'] OR $show['img_bbcode']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+					<if condition="$show['url_bbcode']">
+						<td><div class="imagebutton" id="{$editorid}_cmd_createlink"><img src="$stylevar[imgdir_editor]/createlink.gif" width="21" height="20" alt="$vbphrase[insert_link]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_unlink"><img src="$stylevar[imgdir_editor]/unlink.gif" width="21" height="20" alt="$vbphrase[remove_link]" /></div></td>
+						<td><div class="imagebutton" id="{$editorid}_cmd_email"><img src="$stylevar[imgdir_editor]/email.gif" width="21" height="20" alt="$vbphrase[insert_email_link]" /></div></td>
+					</if>
+					<if condition="$show['img_bbcode']">
+						<td><div class="imagebutton" id="{$editorid}_cmd_insertimage"><img src="$stylevar[imgdir_editor]/insertimage.gif" width="21" height="20" alt="$vbphrase[insert_image]" /></div></td>
+					</if>
+				</if>
+				<if condition="$show['quote_bbcode']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+					<td><div class="imagebutton" id="{$editorid}_cmd_wrap0_quote"><img src="$stylevar[imgdir_editor]/quote.gif" width="21" height="20" alt="$vbphrase[wrap_quote_tags]" /></div></td>
+				</if>
+				<if condition="$show['code_bbcode'] OR $show['html_bbcode'] OR $show['php_bbcode']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>				
+					<if condition="$show['code_bbcode']"><td><div class="imagebutton" id="{$editorid}_cmd_wrap0_code"><img src="$stylevar[imgdir_editor]/code.gif" width="21" height="20" alt="$vbphrase[wrap_code_tags]" /></div></td></if>
+					<if condition="$show['html_bbcode']"><td><div class="imagebutton" id="{$editorid}_cmd_wrap0_html"><img src="$stylevar[imgdir_editor]/html.gif"  width="21" height="20" alt="$vbphrase[wrap_html_tags]" /></div></td></if>
+					<if condition="$show['php_bbcode']"><td><div class="imagebutton" id="{$editorid}_cmd_wrap0_php"><img src="$stylevar[imgdir_editor]/php.gif" width="21" height="20" alt="$vbphrase[wrap_php_tags]" /></div></td></if>
+				</if>
+				<if condition="$vboptions['phpkd_aqr_extrabuttons'] AND $vBeditTemplate['extrabuttons'] != '' ">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>	
+					$vBeditTemplate[extrabuttons]
+				</if>
+				</tr>
+			</table>
+			</if>
+
+		</div>
+		</if>
+
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr valign="top">
+				<td class="controlbar">
+					<fieldset style="border:0px; padding:0px; margin:0px">
+						<if condition="$show['qr_require_click']">
+							<textarea name="message" id="{$editorid}_textarea" rows="10" cols="60" style="width: <if condition="$vboptions['phpkd_aqr_messagewidth']">100%<else />$stylevar[messagewidth]</if>; height: <if condition="$vboptions['phpkd_aqr_editor_height']">$vboptions[phpkd_aqr_editor_height]<else />{$editor_height}</if>px" tabindex="1" dir="$stylevar[textdirection]" disabled="disabled">$vbphrase[click_quick_reply_icon]</textarea>
+						<else />
+							<textarea name="message" id="{$editorid}_textarea" rows="10" cols="60" style="width: <if condition="$vboptions['phpkd_aqr_messagewidth']">100%<else />$stylevar[messagewidth]</if>; height: <if condition="$vboptions['phpkd_aqr_editor_height']">$vboptions[phpkd_aqr_editor_height]<else />{$editor_height}</if>px" tabindex="1" dir="$stylevar[textdirection]"></textarea>
+						</if>
+					</fieldset>
+				</td>
+				<if condition="$smiliebox AND !$vboptions['phpkd_aqr_smbox_below']"><td class="controlbar">$smiliebox</td></if>
+			</tr>
+			<if condition="$smiliebox AND $vboptions['phpkd_aqr_smbox_below']"><tr><td class="controlbar">$smiliebox</td></tr></if>
+		</table>
+	</td>
+</tr>
+</table>
+
+<input type="hidden" name="wysiwyg" id="{$editorid}_mode" value="$editortype" />
+<input type="hidden" name="styleid" value="$session[styleid]" />
+
+<script type="text/javascript">
+<!--
+vB_Editor['$editorid'] = new vB_Text_Editor('$editorid', $editortype, '$forumid', '$parsesmilie');
+var QR_EditorID = '$editorid';
+//-->
+</script>
+<!-- Product's Debug Info: Name: $phpkd_aqr[title], Version: $phpkd_aqr[version], Revision: $phpkd_aqr[revision], Released: $phpkd_aqr[released]. -->]]></template>
+	</templates>
+	<plugins>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[Advanced Quick Reply - [ Cache Templates ]]]></title>
+			<hookname>cache_templates</hookname>
+			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqr_active'] AND THIS_SCRIPT == 'showthread' AND $vbulletin->options['quickreply'] > 0)
+{
+	$globaltemplates[] = 'phpkd_aqr_showthread_quickreply';
+	if ($vbulletin->options['phpkd_aqr_smtotal'] > 0)
+	{
+		$globaltemplates[] = 'editor_smiliebox_straggler';
+		$globaltemplates[] = 'editor_smiliebox_row';
+		$globaltemplates[] = 'editor_smilie';
+	}
+
+	if ($vbulletin->options['phpkd_aqr_smbox_below'])
+	{
+		$globaltemplates[] = 'phpkd_aqr_editor_smiliebox';
+	}
+	else
+	{
+		$globaltemplates[] = 'editor_smiliebox';
+	}
+}]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[Advanced Quick Reply - [ Main process ]]]></title>
+			<hookname>editor_toolbar_end</hookname>
+			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqr_active'])
+{
+	if (($editor_type == 'qr' OR $editor_type == 'qr_small') AND $show['editor_toolbar'] AND $toolbartype)
+	{
+		require_once(DIR . '/includes/class_bbcode.php');
+		$show['font_bbcode']  = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_FONT)  ? true : false;
+		$show['size_bbcode']  = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_SIZE)  ? true : false;
+		$show['color_bbcode'] = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_COLOR) ? true : false;
+		$show['basic_bbcode'] = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_BASIC) ? true : false;
+		$show['align_bbcode'] = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_ALIGN) ? true : false;
+		$show['list_bbcode']  = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_LIST)  ? true : false;
+		$show['code_bbcode']  = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_CODE)  ? true : false;
+		$show['html_bbcode']  = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_HTML)  ? true : false;
+		$show['php_bbcode']   = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_PHP)   ? true : false;
+		$show['url_bbcode']   = ($vbulletin->options['phpkd_aqr_allowedbbcodes'] & ALLOW_BBCODE_URL)   ? true : false;
+		$show['quote_bbcode'] = true; // can't disable this anywhere but in sigs
+
+		$editor_template_name = 'phpkd_aqr_showthread_quickreply';
+
+		if ($allowsmilie AND ($vbulletin->options['phpkd_aqr_smtotal'] > 0 OR $vbulletin->options['phpkd_aqr_wysiwyg_smtotal'] > 0))
+		{
+			// query smilies
+			$smilies = $vbulletin->db->query_read_slave("
+				SELECT smilieid, smilietext, smiliepath, smilie.title,
+					imagecategory.title AS category
+				FROM " . TABLE_PREFIX . "smilie AS smilie
+				LEFT JOIN " . TABLE_PREFIX . "imagecategory AS imagecategory USING(imagecategoryid)
+				ORDER BY imagecategory.displayorder, imagecategory.title, smilie.displayorder
+			");
+
+			// get total number of smilies
+			$totalsmilies = $vbulletin->db->num_rows($smilies);
+			$show['phpkd_aqr_smilies'] = true;
+		}
+
+		if ($show['phpkd_aqr_smilies'] AND $totalsmilies > 0)
+		{
+			if ($vbulletin->options['phpkd_aqr_wysiwyg_smtotal'] > 0)
+			{
+				$show['wysiwygsmilies'] = true;
+
+				// smilie dropdown menu
+				$vBeditJs['smilie_options_array'] = array();
+				$i = 0;
+				while ($smilie = $vbulletin->db->fetch_array($smilies))
+				{
+					if (empty($prevcategory))
+					{
+						$prevcategory = $smilie['category'];
+					}
+					if ($i++ < $vbulletin->options['phpkd_aqr_wysiwyg_smtotal'])
+					{
+						$vBeditJs['smilie_options_array']["$smilie[category]"][] = "\t\t'$smilie[smilieid]' : new Array('" . addslashes_js($smilie['smiliepath']) . "', '" . addslashes_js($smilie['smilietext']) . "', '" . addslashes_js($smilie['title']) . "')";
+					}
+					else
+					{
+						$vBeditJs['smilie_options_array']["$prevcategory"][] = "\t\t'more' : '" . addslashes_js($vbphrase['show_all_smilies']) . "'\n";
+						break;
+					}
+					$prevcategory = $smilie['category'];
+				}
+				foreach (array_keys($vBeditJs['smilie_options_array']) AS $category)
+				{
+					$vBeditJs['smilie_options_array']["$category"] = "\t'" . addslashes_js($category) . "' : {\n" . implode(",\n", $vBeditJs['smilie_options_array']["$category"]) . "}";
+				}
+				$vBeditJs['smilie_options_array'] = "\n" . implode(",\n", $vBeditJs['smilie_options_array']);
+			}
+			else
+			{
+				$show['wysiwygsmilies'] = false;
+			}
+
+			// clickable smilie box
+			if ($vbulletin->options['phpkd_aqr_smtotal'])
+			{
+				$vbulletin->db->data_seek($smilies, 0);
+				$i = 0;
+				$bits = array();
+				while ($smilie = $vbulletin->db->fetch_array($smilies) AND $i++ < $vbulletin->options['phpkd_aqr_smtotal'])
+				{
+					$smiliehtml = "<img src=\"$smilie[smiliepath]\" id=\"{$editorid}_smilie_$smilie[smilieid]\" alt=\"" . htmlspecialchars_uni($smilie['smilietext']) . "\" title=\"$smilie[title]\" border=\"0\" />";
+					eval('$bits[] = "' . fetch_template('editor_smilie') . '";');
+
+					if (sizeof($bits) == $vbulletin->options['phpkd_aqr_smcolumns'])
+					{
+						$smiliecells = implode('', $bits);
+						eval('$smiliebits .= "' . fetch_template('editor_smiliebox_row') . '";');
+						$bits = array();
+					}
+				}
+
+				// fill in empty cells if required
+				$remaining = sizeof($bits);
+				if ($remaining > 0)
+				{
+					$remainingcolumns = $vbulletin->options['phpkd_aqr_smcolumns'] - $remaining;
+					eval('$bits[] = "' . fetch_template('editor_smiliebox_straggler') . '";');
+					$smiliecells = implode('', $bits);
+					eval('$smiliebits .= "' . fetch_template('editor_smiliebox_row') . '";');
+				}
+				$show['moresmilieslink'] = iif ($totalsmilies > $vbulletin->options['phpkd_aqr_smtotal'], true, false);
+				$show['smiliebox'] = true;
+			}
+
+			$vbulletin->db->free_result($smilies);
+		}
+	}
+
+	if ($vbulletin->options['phpkd_aqr_smbox_below'])
+	{
+		//$vbulletin->templatecache['editor_smiliebox'] = $vbulletin->templatecache['phpkd_aqr_editor_smiliebox'];
+		eval('$smiliebox = "' . fetch_template('phpkd_aqr_editor_smiliebox') . '";');
+	}
+	else
+	{
+		eval('$smiliebox = "' . fetch_template('editor_smiliebox') . '";');
+	}
+
+	// Prepare Debiugging Data!
+	if (!$phpkd_aqr AND $phpkd_aqr_data = unserialize($vbulletin->options['phpkd_free37_data']))
+	{
+		$phpkd_aqr =& $phpkd_aqr_data['phpkd_aqr'];
+	}
+}]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[Advanced Quick Reply - [ Process mandatory template replaces ]]]></title>
+			<hookname>showthread_complete</hookname>
+			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqr_active'])
+{
+	$vbulletin->templatecache['SHOWTHREAD'] = str_replace(array('max-width:$stylevar[formwidth]; width:auto !important; ', '<div id=\"$editorid\" class=\"vBulletin_editor\">$messagearea</div>'), array('', '$messagearea'), $vbulletin->templatecache['SHOWTHREAD']);
+}]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title><![CDATA[Advanced Quick Reply - [ Grouping Templates ]]]></title>
+			<hookname>template_groups</hookname>
+			<phpcode><![CDATA[$only['phpkd_aqr_'] = $vbphrase['phpkd_aqr'];]]></phpcode>
+		</plugin>
+	</plugins>
+	<phrases>
+		<phrasetype name="vBulletin Settings" fieldname="vbsettings">
+			<phrase name="setting_phpkd_aqr_active_desc" date="1203338935" username="PHPKD" version="1.0.0"><![CDATA[From this setting you can control "Advanced Quick Reply Editor" Editor globally, it's a master On/Off Switch.]]></phrase>
+			<phrase name="setting_phpkd_aqr_active_title" date="1203338935" username="PHPKD" version="1.0.0"><![CDATA[Advanced Quick Reply Active]]></phrase>
+			<phrase name="setting_phpkd_aqr_allowedbbcodes_desc" date="1203338805" username="PHPKD" version="1.0.0"><![CDATA[This setting allows you to enable and disable various built-in BBCode Tags in "Advanced Quick Reply".<br />
+<br />
+Disabling a bbcode will <strong>NOT</strong> prevent it from working in the "Advanced Quick Reply", but only hide it's relevant button from the editor.]]></phrase>
+			<phrase name="setting_phpkd_aqr_allowedbbcodes_title" date="1203338805" username="PHPKD" version="1.0.0"><![CDATA[Enabled Built-in BB Code Tags]]></phrase>
+			<phrase name="setting_phpkd_aqr_messagewidth_desc" date="1211595089" username="PHPKD" version="1.0.0"><![CDATA[The message box width can be the default width as the style variable "messagewidth" or can be 100% to fit the full width of the allowed space.]]></phrase>
+			<phrase name="setting_phpkd_aqr_messagewidth_title" date="1211595089" username="PHPKD" version="1.0.0"><![CDATA[Message box width]]></phrase>
+			<phrase name="setting_phpkd_aqr_smbox_below_desc" date="1203340886" username="PHPKD" version="1.0.0"><![CDATA[You can display the smiliebox below editor rather than beside it by activating this setting.]]></phrase>
+			<phrase name="setting_phpkd_aqr_smbox_below_title" date="1203340886" username="PHPKD" version="1.0.0"><![CDATA[Smiliebox Below Editor]]></phrase>
+			<phrase name="setting_phpkd_aqr_smcolumns_desc" date="1203339221" username="PHPKD" version="1.0.0"><![CDATA[If the smiliebox is enabled, how many smilies should be shown per row of the box?]]></phrase>
+			<phrase name="setting_phpkd_aqr_smcolumns_title" date="1203339221" username="PHPKD" version="1.0.0"><![CDATA[Smiliebox Smilies Per Row]]></phrase>
+			<phrase name="setting_phpkd_aqr_smtotal_desc" date="1203339241" username="PHPKD" version="1.0.0"><![CDATA[How many smilies should be displayed in the smiliebox before the user is prompted to click for the more smilies popup window?<br />
+<br />
+Set this value to 0 if you would like to hide the clickable smiliebox completely.]]></phrase>
+			<phrase name="setting_phpkd_aqr_smtotal_title" date="1203339241" username="PHPKD" version="1.0.0"><![CDATA[Smiliebox Total Smilies]]></phrase>
+			<phrase name="setting_phpkd_aqr_wysiwyg_smtotal_desc" date="1203339286" username="PHPKD" version="1.0.0"><![CDATA[Use this option to set the number of smilies that will appear in the WYSIWYG popup smilie menu before the 'show all smilies' link is displayed.<br />
+<br />
+Set this value to 0 if you would like to hide the popup smilie menu completely.]]></phrase>
+			<phrase name="setting_phpkd_aqr_wysiwyg_smtotal_title" date="1203339286" username="PHPKD" version="1.0.0"><![CDATA[Smilie Menu Total Smilies]]></phrase>
+			<phrase name="setting_phpkd_aqr_editor_height_desc" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[In some circumstances (like presence of big smilies & these smilies displayed beside the quick reply's textarea not under it) the input field may appears ugly, in this case you may need to edit the message box height by increasing it. Here you can do so. (Enter the height value in pixels - positive integer value, leave it blank or enter 0 to use default height)]]></phrase>
+			<phrase name="setting_phpkd_aqr_editor_height_title" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[Message box Height]]></phrase>
+			<phrase name="setting_phpkd_aqr_cutcopypaste_desc" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[You can display/hide 'Cut/Copy/Paste' buttons in the "Advanced Quick Reply" Editor from this setting. Choose "Yes" to display or "No" to hide.]]></phrase>
+			<phrase name="setting_phpkd_aqr_cutcopypaste_title" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[Display Cut/Copy/Paste Buttons]]></phrase>
+			<phrase name="setting_phpkd_aqr_extrabuttons_desc" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[You can display/hide 'Extra Buttons' in the "Advanced Quick Reply" Editor from this setting. Choose "Yes" to display or "No" to hide.]]></phrase>
+			<phrase name="setting_phpkd_aqr_extrabuttons_title" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[Display Extra Buttons]]></phrase>
+			<phrase name="setting_phpkd_aqr_undoredo_desc" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[You can display/hide 'Undo/Redo' Buttons in the "Advanced Quick Reply" Editor from this setting. Choose "Yes" to display or "No" to hide.]]></phrase>
+			<phrase name="setting_phpkd_aqr_undoredo_title" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[Display Undo/Redo Buttons]]></phrase>
+			<phrase name="settinggroup_phpkd_aqr_bbcode" date="1203338698" username="PHPKD" version="1.0.0"><![CDATA[Advanced Quick Reply Settings]]></phrase>
+		</phrasetype>
+		<phrasetype name="Style Tools" fieldname="style">
+			<phrase name="phpkd_aqr" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[Advanced Quick Reply]]></phrase>
+		</phrasetype>
+		<phrasetype name="Plugin System" fieldname="plugins">
+			<phrase name="phpkd_aqr_deleting_old_product" date="1213458573" username="PHPKD" version="1.1.0"><![CDATA[Deleting old version of this product.]]></phrase>
+		</phrasetype>
+	</phrases>
+	<options>
+		<settinggroup name="phpkd_aqr_bbcode" displayorder="1005">
+			<setting varname="phpkd_aqr_active" displayorder="10">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_allowedbbcodes" displayorder="20">
+				<datatype>bitfield</datatype>
+				<optioncode>bitfield:nocache|allowedbbcodes</optioncode>
+				<defaultvalue>1023</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_smtotal" displayorder="30">
+				<datatype>number</datatype>
+				<defaultvalue>15</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_smcolumns" displayorder="40">
+				<datatype>number</datatype>
+				<defaultvalue>15</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_wysiwyg_smtotal" displayorder="50">
+				<datatype>number</datatype>
+				<defaultvalue>15</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_smbox_below" displayorder="60">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_cutcopypaste" displayorder="70">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_undoredo" displayorder="80">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_extrabuttons" displayorder="90">
+				<datatype>boolean</datatype>
+				<optioncode>yesno</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_messagewidth" displayorder="100">
+				<datatype>number</datatype>
+				<optioncode>select:piped
+0|default
+1|100%</optioncode>
+				<defaultvalue>1</defaultvalue>
+			</setting>
+			<setting varname="phpkd_aqr_editor_height" displayorder="110">
+				<datatype>integer</datatype>
+				<defaultvalue>0</defaultvalue>
+			</setting>
+		</settinggroup>
+	</options>
+	<helptopics>
+	</helptopics>
+	<cronentries>
+	</cronentries>
+	<faqentries>
+	</faqentries>
+</product>
