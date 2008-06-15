@@ -52,20 +52,10 @@ print_dots_stop();]]></installcode>
 		</code>
 	</codes>
 	<templates>
-		<template name="phpkd_aqe_editor_smiliebox" templatetype="template" date="1203342391" username="PHPKD" version="1.0.0"><![CDATA[<if condition="$show['smiliebox']">
-<fieldset id="{$editorid}_smiliebox" title="$vbphrase[smilies]">
-	<legend>$vbphrase[smilies]<if condition="$show['moresmilieslink']"> [<a href="#" onclick="vB_Editor['$editorid'].open_smilie_window(smiliewindow_x, smiliewindow_y); return false" title="<phrase 1="$vboptions[smtotal]" 2="$totalsmilies">$vbphrase[showing_x_smilies_of_y_total]</phrase>">$vbphrase[more]</a>]</if></legend>
-	<table cellpadding="4" cellspacing="0" border="0" align="center">
-	$smiliebits
-	</table>
-</fieldset>
-<else />
-<div id="smiliebox" style="display:none"></div>
-</if>]]></template>
 		<template name="phpkd_aqe_postit_quickedit" templatetype="template" date="1211595343" username="PHPKD" version="1.0.0"><![CDATA[<!-- $phpkd_aqe[title] -->
 <if condition="$show['quick_edit_form_tag']"><form></if>
 
-<table cellpadding="0" cellspacing="0" border="1" align="center" width="<if condition="$vboptions['phpkd_aqr_messagewidth']">100%<else />95%</if>" id="{$editorid}_editor">
+<table cellpadding="0" cellspacing="0" border="1" align="center" width="<if condition="$vboptions['phpkd_aqe_messagewidth']">100%<else />95%</if>" id="{$editorid}_editor">
 <tr>
 	<td class="vBulletin_editor">
 	<if condition="$show['editor_toolbar']">
@@ -111,28 +101,17 @@ print_dots_stop();]]></installcode>
 					</div>
 				</td>
 				</if>
-				<if condition="$show['wysiwygsmilies']">
-				<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
-				<td>
-					<div class="imagebutton" id="{$editorid}_popup_smilie" title="$vbphrase[smilies]">
-						<table cellpadding="0" cellspacing="0" border="0">
-							<tr>
-								<td><img src="$stylevar[imgdir_editor]/smilie.gif" alt="" width="21" height="20" /></td>
-								<td class="alt_pickbutton"><img src="$stylevar[imgdir_editor]/menupop.gif" width="11" height="16" alt="" /></td>
-							</tr>
-						</table>
-					</div>
-				</td>
-				</if>
-				<if condition="$vboptions['phpkd_aqr_cutcopypaste']">
+				<if condition="$vboptions['phpkd_aqe_cutcopypaste']">
 					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
 					<td><div class="imagebutton" id="{$editorid}_cmd_cut"><img src="$stylevar[imgdir_editor]/cut.gif" width="21" height="20" alt="$vbphrase[cut]" /></div></td>
 					<td><div class="imagebutton" id="{$editorid}_cmd_copy"><img src="$stylevar[imgdir_editor]/copy.gif" width="21" height="20" alt="$vbphrase[copy]" /></div></td>
 					<td><div class="imagebutton" id="{$editorid}_cmd_paste"><img src="$stylevar[imgdir_editor]/paste.gif" width="21" height="20" alt="$vbphrase[paste]" /></div></td>
 				</if>
-				<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
-				<td><div class="imagebutton" id="{$editorid}_cmd_undo"><img src="$stylevar[imgdir_editor]/undo.gif" width="21" height="20" alt="$vbphrase[undo]" /></div></td>
-				<td><div class="imagebutton" id="{$editorid}_cmd_redo"><img src="$stylevar[imgdir_editor]/redo.gif" width="21" height="20" alt="$vbphrase[redo]" /></div></td>
+				<if condition="$vboptions['phpkd_aqe_undoredo']">
+					<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>
+					<td><div class="imagebutton" id="{$editorid}_cmd_undo"><img src="$stylevar[imgdir_editor]/undo.gif" width="21" height="20" alt="$vbphrase[undo]" /></div></td>
+					<td><div class="imagebutton" id="{$editorid}_cmd_redo"><img src="$stylevar[imgdir_editor]/redo.gif" width="21" height="20" alt="$vbphrase[redo]" /></div></td>
+				</if>
 
 				<if condition="!is_browser('opera')"><td width="100%">&nbsp;</td></if>
 				<if condition="is_browser('ie')"><td><div class="imagebutton" id="{$editorid}_cmd_spelling"><img src="$stylevar[imgdir_editor]/spelling.gif" width="21" height="20" alt="$vbphrase[check_spelling]" /></div></td></if>
@@ -199,7 +178,7 @@ print_dots_stop();]]></installcode>
 				<if condition="$show['html_bbcode']"><td><div class="imagebutton" id="{$editorid}_cmd_wrap0_html"><img src="$stylevar[imgdir_editor]/html.gif"  width="21" height="20" alt="$vbphrase[wrap_html_tags]" /></div></td></if>
 				<if condition="$show['php_bbcode']"><td><div class="imagebutton" id="{$editorid}_cmd_wrap0_php"><img src="$stylevar[imgdir_editor]/php.gif" width="21" height="20" alt="$vbphrase[wrap_php_tags]" /></div></td></if>
 			</if>
-			<if condition="$vboptions['phpkd_aqr_extrabuttons'] AND $vBeditTemplate['extrabuttons'] != '' ">
+			<if condition="$vboptions['phpkd_aqe_extrabuttons'] AND $vBeditTemplate['extrabuttons'] != '' ">
 				<td><img src="$stylevar[imgdir_editor]/separator.gif" width="6" height="20" alt="" /></td>	
 				$vBeditTemplate[extrabuttons]
 			</if>
@@ -210,21 +189,13 @@ print_dots_stop();]]></installcode>
 	</div>
 	</if>
 
-	<table cellpadding="0" cellspacing="0" border="0" width="100%">
-		<tr valign="top">
-			<td class="controlbar">
-				<div><textarea name="message" id="{$editorid}_textarea" rows="10" cols="60" style="width: <if condition="$vboptions['phpkd_aqr_messagewidth']">100%<else />500px</if>; height: <if condition="$vboptions['phpkd_aqr_editor_height']">$vboptions[phpkd_aqr_editor_height]<else />{$editor_height}</if>px" tabindex="1" dir="$stylevar[textdirection]">$newpost[message]</textarea></div>
-			</td>
-			<if condition="$qesmiliebox AND !$vboptions['phpkd_aqr_smbox_below']"><td class="controlbar">$qesmiliebox</td></if>
-		</tr>
-		<tr>
-			<td class="fieldset" style="margin-top:$stylevar[formspacer]px" <if condition="$qesmiliebox AND !$vboptions['phpkd_aqr_smbox_below']">colspan="2"</if>>
-				<div>$vbphrase[reason_for_editing]:</div>
-				<div><input type="text" class="bginput" name="reason" id="{$editorid}_edit_reason" value="" size="50" maxlength="125" tabindex="1" title="$vbphrase[optional]" /></div>
-			</td>
-		</tr>
-		<if condition="$qesmiliebox AND $vboptions['phpkd_aqr_smbox_below']"><tr><td class="controlbar">$qesmiliebox</td></tr></if>
-	</table>
+	<div class="controlbar">
+		<div><textarea name="message" id="{$editorid}_textarea" rows="10" cols="60" style="width:500px; height:{$editor_height}px" tabindex="1" dir="$stylevar[textdirection]">$newpost[message]</textarea></div>
+		<div class="fieldset" style="margin-top:$stylevar[formspacer]px">
+			<div>$vbphrase[reason_for_editing]:</div>
+			<div><input type="text" class="bginput" name="reason" id="{$editorid}_edit_reason" value="" size="50" maxlength="125" tabindex="1" title="$vbphrase[optional]" /></div>
+		</div>
+	</div>
 
 	<div align="$stylevar[right]">
 		<img style="vertical-align:middle; display: none" id="{$editorid}_posting_msg" src="$stylevar[imgdir_misc]/progress.gif" alt="$vbphrase[posting_message_please_wait]" />
@@ -297,21 +268,6 @@ print_dots_stop();]]></installcode>
 			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqe_active'] AND THIS_SCRIPT == 'showthread' AND $vbulletin->options['quickedit'])
 {
 	$globaltemplates[] = 'phpkd_aqe_postit_quickedit';
-	if ($vbulletin->options['phpkd_aqe_smtotal'] > 0)
-	{
-		$globaltemplates[] = 'editor_smiliebox_straggler';
-		$globaltemplates[] = 'editor_smiliebox_row';
-		$globaltemplates[] = 'editor_smilie';
-	}
-
-	if ($vbulletin->options['phpkd_aqe_smbox_below'])
-	{
-		$globaltemplates[] = 'phpkd_aqe_editor_smiliebox';
-	}
-	else
-	{
-		$globaltemplates[] = 'editor_smiliebox';
-	}
 }]]></phpcode>
 		</plugin>
 		<plugin active="1" executionorder="5">
@@ -335,104 +291,6 @@ print_dots_stop();]]></installcode>
 		$show['quote_bbcode'] = true; // can't disable this anywhere but in sigs
 
 		$editor_template_name = 'phpkd_aqe_postit_quickedit';
-
-		if ($allowsmilie AND ($vbulletin->options['phpkd_aqe_smtotal'] > 0 OR $vbulletin->options['phpkd_aqe_wysiwyg_smtotal'] > 0))
-		{
-			// query smilies
-			$smilies = $vbulletin->db->query_read_slave("
-				SELECT smilieid, smilietext, smiliepath, smilie.title,
-					imagecategory.title AS category
-				FROM " . TABLE_PREFIX . "smilie AS smilie
-				LEFT JOIN " . TABLE_PREFIX . "imagecategory AS imagecategory USING(imagecategoryid)
-				ORDER BY imagecategory.displayorder, imagecategory.title, smilie.displayorder
-			");
-
-			// get total number of smilies
-			$totalsmilies = $vbulletin->db->num_rows($smilies);
-			$show['phpkd_aqe_smilies'] = true;
-		}
-
-		if ($show['phpkd_aqe_smilies'] AND $totalsmilies > 0)
-		{
-			if ($vbulletin->options['phpkd_aqe_wysiwyg_smtotal'] > 0)
-			{
-				$show['wysiwygsmilies'] = true;
-
-				// smilie dropdown menu
-				$vBeditJs['smilie_options_array'] = array();
-				$i = 0;
-				while ($smilie = $vbulletin->db->fetch_array($smilies))
-				{
-					if (empty($prevcategory))
-					{
-						$prevcategory = $smilie['category'];
-					}
-					if ($i++ < $vbulletin->options['phpkd_aqe_wysiwyg_smtotal'])
-					{
-						$vBeditJs['smilie_options_array']["$smilie[category]"][] = "\t\t'$smilie[smilieid]' : new Array('" . addslashes_js($smilie['smiliepath']) . "', '" . addslashes_js($smilie['smilietext']) . "', '" . addslashes_js($smilie['title']) . "')";
-					}
-					else
-					{
-						$vBeditJs['smilie_options_array']["$prevcategory"][] = "\t\t'more' : '" . addslashes_js($vbphrase['show_all_smilies']) . "'\n";
-						break;
-					}
-					$prevcategory = $smilie['category'];
-				}
-				foreach (array_keys($vBeditJs['smilie_options_array']) AS $category)
-				{
-					$vBeditJs['smilie_options_array']["$category"] = "\t'" . addslashes_js($category) . "' : {\n" . implode(",\n", $vBeditJs['smilie_options_array']["$category"]) . "}";
-				}
-				$vBeditJs['smilie_options_array'] = "\n" . implode(",\n", $vBeditJs['smilie_options_array']);
-			}
-			else
-			{
-				$show['wysiwygsmilies'] = false;
-			}
-
-			// clickable smilie box
-			if ($vbulletin->options['phpkd_aqe_smtotal'])
-			{
-				$vbulletin->db->data_seek($smilies, 0);
-				$i = 0;
-				$bits = array();
-				while ($smilie = $vbulletin->db->fetch_array($smilies) AND $i++ < $vbulletin->options['phpkd_aqe_smtotal'])
-				{
-					$smiliehtml = "<img src=\"$smilie[smiliepath]\" id=\"{$editorid}_smilie_$smilie[smilieid]\" alt=\"" . htmlspecialchars_uni($smilie['smilietext']) . "\" title=\"$smilie[title]\" border=\"0\" />";
-					eval('$bits[] = "' . fetch_template('editor_smilie') . '";');
-
-					if (sizeof($bits) == $vbulletin->options['phpkd_aqe_smcolumns'])
-					{
-						$smiliecells = implode('', $bits);
-						eval('$smiliebits .= "' . fetch_template('editor_smiliebox_row') . '";');
-						$bits = array();
-					}
-				}
-
-				// fill in empty cells if required
-				$remaining = sizeof($bits);
-				if ($remaining > 0)
-				{
-					$remainingcolumns = $vbulletin->options['phpkd_aqe_smcolumns'] - $remaining;
-					eval('$bits[] = "' . fetch_template('editor_smiliebox_straggler') . '";');
-					$smiliecells = implode('', $bits);
-					eval('$smiliebits .= "' . fetch_template('editor_smiliebox_row') . '";');
-				}
-				$show['moresmilieslink'] = iif ($totalsmilies > $vbulletin->options['phpkd_aqe_smtotal'], true, false);
-				$show['smiliebox'] = true;
-			}
-
-			$vbulletin->db->free_result($smilies);
-		}
-	}
-
-	if ($vbulletin->options['phpkd_aqe_smbox_below'])
-	{
-		//$vbulletin->templatecache['editor_smiliebox'] = $vbulletin->templatecache['phpkd_aqe_editor_smiliebox'];
-		eval('$qesmiliebox = "' . fetch_template('phpkd_aqe_editor_smiliebox') . '";');
-	}
-	else
-	{
-		eval('$qesmiliebox = "' . fetch_template('editor_smiliebox') . '";');
 	}
 
 	// Prepare Debiugging Data!
@@ -458,19 +316,7 @@ Disabling a bbcode will <strong>NOT</strong> prevent it from working in the "Adv
 			<phrase name="setting_phpkd_aqe_allowedbbcodes_title" date="1203338805" username="PHPKD" version="1.0.0"><![CDATA[Enabled Built-in BB Code Tags]]></phrase>
 			<phrase name="setting_phpkd_aqe_messagewidth_desc" date="1211595089" username="PHPKD" version="1.0.0"><![CDATA[The message box width can be the default width as the style variable "messagewidth" or can be 100% to fit the full width of the allowed space.]]></phrase>
 			<phrase name="setting_phpkd_aqe_messagewidth_title" date="1211595089" username="PHPKD" version="1.0.0"><![CDATA[Message box width]]></phrase>
-			<phrase name="setting_phpkd_aqe_smbox_below_desc" date="1203340886" username="PHPKD" version="1.0.0"><![CDATA[You can display the smiliebox below editor rather than beside it by activating this setting.]]></phrase>
-			<phrase name="setting_phpkd_aqe_smbox_below_title" date="1203340886" username="PHPKD" version="1.0.0"><![CDATA[Smiliebox Below Editor]]></phrase>
-			<phrase name="setting_phpkd_aqe_smcolumns_desc" date="1203339221" username="PHPKD" version="1.0.0"><![CDATA[If the smiliebox is enabled, how many smilies should be shown per row of the box?]]></phrase>
-			<phrase name="setting_phpkd_aqe_smcolumns_title" date="1203339221" username="PHPKD" version="1.0.0"><![CDATA[Smiliebox Smilies Per Row]]></phrase>
-			<phrase name="setting_phpkd_aqe_smtotal_desc" date="1203339241" username="PHPKD" version="1.0.0"><![CDATA[How many smilies should be displayed in the smiliebox before the user is prompted to click for the more smilies popup window?<br />
-<br />
-Set this value to 0 if you would like to hide the clickable smiliebox completely.]]></phrase>
-			<phrase name="setting_phpkd_aqe_smtotal_title" date="1203339241" username="PHPKD" version="1.0.0"><![CDATA[Smiliebox Total Smilies]]></phrase>
-			<phrase name="setting_phpkd_aqe_wysiwyg_smtotal_desc" date="1203339286" username="PHPKD" version="1.0.0"><![CDATA[Use this option to set the number of smilies that will appear in the WYSIWYG popup smilie menu before the 'show all smilies' link is displayed.<br />
-<br />
-Set this value to 0 if you would like to hide the popup smilie menu completely.]]></phrase>
-			<phrase name="setting_phpkd_aqe_wysiwyg_smtotal_title" date="1203339286" username="PHPKD" version="1.0.0"><![CDATA[Smilie Menu Total Smilies]]></phrase>
-			<phrase name="setting_phpkd_aqe_editor_height_desc" date="1213458573" username="PHPKD" version="1.0.0"><![CDATA[In some circumstances (like presence of big smilies & these smilies displayed beside the Quick Edit's textarea not under it) the input field may appears ugly, in this case you may need to edit the message box height by increasing it. Here you can do so. (Enter the height value in pixels - positive integer value, leave it blank or enter 0 to use default height)]]></phrase>
+			<phrase name="setting_phpkd_aqe_editor_height_desc" date="1213458573" username="PHPKD" version="1.0.0"><![CDATA[In some circumstances the input field may appears ugly, in this case you may need to edit the message box height by increasing it. Here you can do so. (Enter the height value in pixels - positive integer value, leave it blank or enter 0 to use default height)]]></phrase>
 			<phrase name="setting_phpkd_aqe_editor_height_title" date="1213458573" username="PHPKD" version="1.0.0"><![CDATA[Message box Height]]></phrase>
 			<phrase name="setting_phpkd_aqe_cutcopypaste_desc" date="1213458573" username="PHPKD" version="1.0.0"><![CDATA[You can display/hide 'Cut/Copy/Paste' buttons in the "Advanced Quick Edit" Editor from this setting. Choose "Yes" to display or "No" to hide.]]></phrase>
 			<phrase name="setting_phpkd_aqe_cutcopypaste_title" date="1213458573" username="PHPKD" version="1.0.0"><![CDATA[Display Cut/Copy/Paste Buttons]]></phrase>
@@ -496,46 +342,29 @@ Set this value to 0 if you would like to hide the popup smilie menu completely.]
 				<optioncode>bitfield:nocache|allowedbbcodes</optioncode>
 				<defaultvalue>1023</defaultvalue>
 			</setting>
-			<setting varname="phpkd_aqe_smtotal" displayorder="30">
-				<datatype>number</datatype>
-				<defaultvalue>15</defaultvalue>
-			</setting>
-			<setting varname="phpkd_aqe_smcolumns" displayorder="40">
-				<datatype>number</datatype>
-				<defaultvalue>15</defaultvalue>
-			</setting>
-			<setting varname="phpkd_aqe_wysiwyg_smtotal" displayorder="50">
-				<datatype>number</datatype>
-				<defaultvalue>15</defaultvalue>
-			</setting>
-			<setting varname="phpkd_aqe_smbox_below" displayorder="60">
+			<setting varname="phpkd_aqe_cutcopypaste" displayorder="30">
 				<datatype>boolean</datatype>
 				<optioncode>yesno</optioncode>
 				<defaultvalue>1</defaultvalue>
 			</setting>
-			<setting varname="phpkd_aqe_cutcopypaste" displayorder="70">
+			<setting varname="phpkd_aqe_undoredo" displayorder="40">
 				<datatype>boolean</datatype>
 				<optioncode>yesno</optioncode>
 				<defaultvalue>1</defaultvalue>
 			</setting>
-			<setting varname="phpkd_aqe_undoredo" displayorder="80">
+			<setting varname="phpkd_aqe_extrabuttons" displayorder="50">
 				<datatype>boolean</datatype>
 				<optioncode>yesno</optioncode>
 				<defaultvalue>1</defaultvalue>
 			</setting>
-			<setting varname="phpkd_aqe_extrabuttons" displayorder="90">
-				<datatype>boolean</datatype>
-				<optioncode>yesno</optioncode>
-				<defaultvalue>1</defaultvalue>
-			</setting>
-			<setting varname="phpkd_aqe_messagewidth" displayorder="100">
+			<setting varname="phpkd_aqe_messagewidth" displayorder="60">
 				<datatype>number</datatype>
 				<optioncode>select:piped
 0|default
 1|100%</optioncode>
 				<defaultvalue>0</defaultvalue>
 			</setting>
-			<setting varname="phpkd_aqe_editor_height" displayorder="110">
+			<setting varname="phpkd_aqe_editor_height" displayorder="70">
 				<datatype>integer</datatype>
 				<defaultvalue>0</defaultvalue>
 			</setting>
