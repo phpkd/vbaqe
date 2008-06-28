@@ -2,7 +2,7 @@
 
 <product productid="phpkd_aqe" active="1">
 	<title>Advanced Quick Edit</title>
-	<description><![CDATA[This product extends 'Quick Edit' to use the "Advanced Editor mode" with all of it's functionality (with full control from AdminCP).]]></description>
+	<description><![CDATA[This product extends 'Quick Edit' functionality to allow most "Advanced Editor mode" options [ All Built-In BBCodes ] (with full control from AdminCP).]]></description>
 	<version><![CDATA[1.0.0]]></version>
 	<revision><![CDATA[$Revision$]]></revision>
 	<released><![CDATA[$Date$]]></released>
@@ -273,7 +273,7 @@ print_dots_stop();]]></installcode>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[Advanced Quick Edit - [ Main process ]]]></title>
 			<hookname>editor_toolbar_end</hookname>
-			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqe_active'])
+			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqe_active'] AND THIS_SCRIPT == 'showthread')
 {
 	if ($editor_type == 'qe' AND $show['editor_toolbar'] AND $toolbartype)
 	{
