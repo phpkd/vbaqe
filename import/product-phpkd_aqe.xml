@@ -265,7 +265,7 @@ print_dots_stop();]]></installcode>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[Advanced Quick Edit - [ Cache Templates ]]]></title>
 			<hookname>cache_templates</hookname>
-			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqe_active'] AND THIS_SCRIPT == 'showthread' AND $vbulletin->options['quickedit'])
+			<phpcode><![CDATA[if ($vbulletin->options['quickedit'] AND $vbulletin->options['phpkd_aqe_active'] AND THIS_SCRIPT == 'showthread')
 {
 	$globaltemplates[] = 'phpkd_aqe_postit_quickedit';
 }]]></phpcode>
@@ -273,7 +273,7 @@ print_dots_stop();]]></installcode>
 		<plugin active="1" executionorder="5">
 			<title><![CDATA[Advanced Quick Edit - [ Main process ]]]></title>
 			<hookname>editor_toolbar_end</hookname>
-			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqe_active'] AND THIS_SCRIPT == 'showthread')
+			<phpcode><![CDATA[if ($vbulletin->options['phpkd_aqe_active'])
 {
 	if ($editor_type == 'qe' AND $show['editor_toolbar'] AND $toolbartype)
 	{
