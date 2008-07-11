@@ -39,13 +39,13 @@ How it works:
 
 Features:
    * Specific Features:
-	o Can enable/disable product globally. v1.0.0
-	o Can select which Built-in BB Code Tags (enabled buttons). v1.0.0
-	o Can determine which width is better, the default message box width or the 100% extended width. v1.0.0
-	o Can "Display Cut/Copy/Paste Buttons" (On/Off). v1.0.0
-	o Can "Display Undo/Redo Buttons" (On/Off). v1.0.0
-	o Can "Display Extra Buttons" (On/Off). v1.0.0
-	o Can determine default "Message box Height". v1.0.0
+	o Can enable/disable product globally. [1.0.0]
+	o Can select which Built-in BB Code Tags (enabled buttons). [1.0.0]
+	o Can determine which width is better, the default message box width or the 100% extended width. [1.0.0]
+	o Can "Display Cut/Copy/Paste Buttons" (On/Off). [1.0.0]
+	o Can "Display Undo/Redo Buttons" (On/Off). [1.0.0]
+	o Can "Display Extra Buttons" (On/Off). [1.0.0]
+	o Can determine default "Message box Height". [1.0.0]
 
    * Default Features:
 	o Supported.
