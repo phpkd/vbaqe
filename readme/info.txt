@@ -1,0 +1,148 @@
+﻿/*============================================================================*\
+|| ########################################################################### ||
+|| # Product Name: Advanced Quick Edit                        Version: 1.0.0 # ||
+|| # License Number: Free License                           $Revision: 113 $ # ||
+|| # ----------------------------------------------------------------------- # ||
+|| #                                                                         # ||
+|| #         Copyright ©2005-2008 PHP KingDom. Some Rights Reserved.         # ||
+|| #   This product may be redistributed in whole or significant part under  # ||
+|| #      "Creative Commons - Attribution-Noncommercial-Share Alike 3.0"     # ||
+|| #                                                                         # ||
+|| # --------------- 'Advanced Quick Edit' IS FREE SOFTWARE ---------------- # ||
+|| #     http://www.phpkd.net | http://www.phpkd.net/info/license/free       # ||
+|| ########################################################################### ||
+\*============================================================================*/
+
+
+Please remember to click Mark as Installed if you use this modification.
+Support questions from members who have not marked this as installed will be considered low priority.
+
+
+Many thanks:
+   * All vBulletin experts.
+   * vBulletin.com for their professional products and premium support.
+   * vBulletin.org for their articles, mods [Thanks also to articles' authors & products' coders].
+   * Paul M for his kind permission for using same scenario of his 'product debug info system'.
+
+
+Name: Advanced Quick Edit
+
+Description: This product extends 'Quick Edit' functionality to allow most "Advanced Editor mode" options [ All Built-In BBCodes ] (with full control from AdminCP).
+
+How it works:
+   * Simple:
+	o Adds functionality of the full editor to the quick edit [ All Built-In BBCodes ].
+   * Detailed:
+	o This product is totally different than other similar products, it doesn't depend on any other codes and doesn't fake vBulletin telling it that this editor is advanced edit or something like this. It leaves every thing as default but extends 'quick edit' functionality by having it's own independent code.
+	o It adds all allowed buil-in bbcodes buttons to the 'quick edit' editor (with full control).
+
+
+Features:
+   * Specific Features:
+	o Can enable/disable product globally.
+	o Can select which Built-in BB Code Tags (enabled buttons).
+	o Can determine which width is better, the default message box width or the 100% extended width.
+	o Can "Display Cut/Copy/Paste Buttons" (On/Off).
+	o Can "Display Undo/Redo Buttons" (On/Off).
+	o Can "Display Extra Buttons" (On/Off).
+	o Can determine default "Message box Height".
+
+   * Default Features:
+	o Supported.
+	o Fully phrased.
+	o Optimized code.
+	o Fully configurable from AdminCP.
+	o Doesn't require any manual edits.
+	o Fully compatible with vBulletin 3.7.x series.
+	o Will not alter environment of vb or other hacks.
+
+
+Help Us:
+   * With your brilliant suggestions and ideas to develop this product.
+   * With your appreciated translations (translation credits go to their owners).
+   * With your appreciated donation to keep this product free, premium and supported product.
+     http://www.moneybookers.com
+     Donations sent to: support [at] phpkd [dot] net By moneybookers.com
+
+
+Known Isues:
+   * None till now.
+
+
+History:
+   * v1.0.0 11/07/2008 06:06 AM (EEST): First initial public release.
+
+
+Notes:
+   1. Supported languages of this product are available as a translated products not as language files, the product's folder contains sub folders for languages, each one has the full package in that particular language (ie: -[English]).
+   2. This product is supposed to work with vBulletin 3.5.x & 3.6.x series, but we don't support versions prior 3.7.x series, Just 3.7.x [U]Stable[/U] series!
+   3. This product still doesn't support the following advanced features (Attachment, SmilieBox, SmilieMenu], there is some difficulties implementing these features as independent features, may be included in a next version.
+
+
+Files Tree:
+   * Lang Name (i.e: English, Arabic ..)
+	o import
+	   + product-phpkd_aqe.xml
+	o readme
+	   + info.txt
+	   + license.txt
+	o screenshots
+	   + Screenshots ...
+
+
+Screen Shots:
+   * Available down there.
+
+
+Technical Notes:
+   * Plugins: 3
+   * New Files: 0
+   * File Edits: 0
+   * New Templates: 1
+   * Template Edits: 0
+   * Auto Template Edits: 0
+   * New Database Tables: 0
+   * Database Alterations: 0
+   * New Phrases: 16
+   * New Options: 7
+   * Cron Jops: 0
+
+
+Installation Procedure:
+   * Import the product file from your AdminCP.
+   * Done.
+
+
+Control:
+   * AdminCP -> vBulletin options -> Advanced Quick Edit Settings
+
+
+At the end:
+   * Thanks to all of you for supporting us by installing our products.
+
+
+Other Mods:
+   * Advanced Quick Reply - vB 3.7.x
+     http://www.phpkd.net/forum/showthread.php?t=3
+
+   * Periodic Prune Pms - vB 3.7.x
+     http://www.phpkd.net/forum/showthread.php?t=2
+
+
+Hints:
+    * Please post your comments, suggestions, ideas for this product. We read all posts.
+    * Make sure you click INSTALL:
+      http://www.phpkd.net/forum/misc.php?do=mods&action=install&id=4
+      You will be contacted when a new version is released.
+
+
+
+Keep Moving Forward!
+
+/*============================================================================*\
+|| ########################################################################### ||
+|| # Version: 1.0.0
+|| # $Revision: 113 $
+|| # Released: $Date: 2008-07-01 19:53:38 +0300 (Tue, 01 Jul 2008) $
+|| ########################################################################### ||
+\*============================================================================*/

@@ -362,7 +362,7 @@ Disabling a bbcode will <strong>NOT</strong> prevent it from working in the "Adv
 				<optioncode>select:piped
 0|default
 1|100%</optioncode>
-				<defaultvalue>0</defaultvalue>
+				<defaultvalue>1</defaultvalue>
 			</setting>
 			<setting varname="phpkd_aqe_editor_height" displayorder="70">
 				<datatype>integer</datatype>
